@@ -22,7 +22,7 @@ var (
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; font-size: 12px; }
 .container {
-	max-width: 640px;
+	max-width: 75%;
 	margin: 1em auto;
 	display: flex;
 	flex-direction: column;
@@ -44,6 +44,9 @@ h2 {
 	flex-direction: row;
 	align-items: center;
 	margin: 0.25em 0;
+}
+.timeseries {
+	width: 170px;
 }
 .col-1 { flex: 1; }
 .col-2 { flex: 2.5; }
@@ -89,13 +92,13 @@ path:last-child { stroke: black; }
 {{ define "table" }}
 <table class="table col-1">
 	{{ if eq .type "c" }}
-		<thead><tr><th>count</th></tr></thead><tbody><tr><td>{{ printf "%.2g" .count }}</td></tr></tbody>
+		<thead><tr><th>count</th></tr></thead><tbody><tr><td>{{ printf "%f" .count }}</td></tr></tbody>
 	{{ else if eq .type "g" }}
 		<thead><tr><th>mean</th><th>min</th><th>max</th></tr></thead>
-		<tbody><tr><td>{{printf "%.2g" .mean}}</td><td>{{printf "%.2g" .min}}</td><td>{{printf "%.2g" .max}}</td></th></tbody>
+		<tbody><tr><td>{{printf "%f" .mean}}</td><td>{{printf "%f" .min}}</td><td>{{printf "%f" .max}}</td></th></tbody>
 	{{ else if eq .type "h" }}
 		<thead><tr><th>P.50</th><th>P.90</th><th>P.99</th></tr></thead>
-		<tbody><tr><td>{{printf "%.2g" .p50}}</td><td>{{printf "%.2g" .p90}}</td><td>{{printf "%.2g" .p99}}</td></tr></tbody>
+		<tbody><tr><td>{{printf "%f" .p50}}</td><td>{{printf "%f" .p90}}</td><td>{{printf "%f" .p99}}</td></tr></tbody>
 	{{ end }}
 </table>
 {{ end }}
@@ -104,15 +107,17 @@ path:last-child { stroke: black; }
 	<div class="col-1">
 		<div class="row">
 			<div class="timeline">{{ duration .samples .interval }}</div>
-			<svg class="col-1" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20">
-			{{ if eq (index (index .samples 0) "type") "c" }}
-				{{ range (path .samples "count") }}<path d={{ . }} />{{end}}
-			{{ else if eq (index (index .samples 0) "type") "g" }}
-				{{ range (path .samples "min" "max" "mean" ) }}<path d={{ . }} />{{end}}
-			{{ else if eq (index (index .samples 0) "type") "h" }}
-				{{ range (path .samples "p50" "p90" "p99") }}<path d={{ . }} />{{end}}
-			{{ end }}
-			</svg>
+			<div class="timeseries">
+				<svg class="col-1" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20">
+				{{ if eq (index (index .samples 0) "type") "c" }}
+					{{ range (path .samples "count") }}<path d={{ . }} />{{end}}
+				{{ else if eq (index (index .samples 0) "type") "g" }}
+					{{ range (path .samples "min" "max" "mean" ) }}<path d={{ . }} />{{end}}
+				{{ else if eq (index (index .samples 0) "type") "h" }}
+					{{ range (path .samples "p50" "p90" "p99") }}<path d={{ . }} />{{end}}
+				{{ end }}
+				</svg>
+			</div>
 		</div>
 	</div>
 {{ end }}
