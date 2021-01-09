@@ -1,1 +1,3 @@
-module github.com/zserge/metric
+module github.com/RadixIoT/metric
+
+go 1.15
